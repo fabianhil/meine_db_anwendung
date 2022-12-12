@@ -15,7 +15,7 @@ int main(int argc, char** argv)
         ->required()
         ->check(CLI::ExistingFile);
         
-	 try{
+	try{
         app.parse(argc, argv);
     } catch(const CLI::ParseError& e){
         return app.exit(e);
@@ -27,10 +27,21 @@ int main(int argc, char** argv)
         exit(0);
     }
 
-    nlohmann::json FileToJson;
-    file >> FileToJson;
+    
 
-    std::cout << FileToJson.dump() << "\n";
+    nlohmann::json database_object;
+    try
+    {
+        database_object = nlohmann::json::parse(file);
+    }
+    catch (nlohmann::json::parse_error& ex)
+    {
+        std::cerr << "parse error at byte " << ex.byte << std::endl;
+    }
+
+    for (auto& element : database_object["Regale"]){
+        std::cout << "Anzahl Lagerplätze: " << element["Anzahl Lagerplätze"] << std::endl;
+    }
 
     return 0;
 }
