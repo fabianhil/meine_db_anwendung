@@ -1,5 +1,5 @@
 {
-  "host": "AweseomeHost",
-  "id": 5,
-  "loginName": "Niklas"
+  "TEST": "TEST-TEST",
+  "TEST2": 999,
+  "TESTNAME": "Mustermann"
 }
