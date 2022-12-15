@@ -4,6 +4,8 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
+
 int main(int argc, char** argv)
 {
 	std::cout << "Hello World" << "\n";
@@ -29,19 +31,55 @@ int main(int argc, char** argv)
 
     
 
-    nlohmann::json database_object;
+    json database_object;
     try
     {
-        database_object = nlohmann::json::parse(file);
+        database_object = json::parse(file);
     }
-    catch (nlohmann::json::parse_error& ex)
+    catch (json::parse_error& ex)
     {
         std::cerr << "parse error at byte " << ex.byte << std::endl;
     }
 
     for (auto& element : database_object["Regale"]){
+        std::cout << "Regal: " << element["Regal"] << std::endl;
         std::cout << "Anzahl Lagerplätze: " << element["Anzahl Lagerplätze"] << std::endl;
+        std::cout << "Inhalt: " << element["Inhalt"] << std::endl;
     }
+
+    std::cout << "\n" << std::endl;
+
+    for (auto it = database_object["Regale"].begin(); it != database_object["Regale"].end(); ++it)
+    {
+        std::cout << *it << std::endl;
+    }
+
+    std::cout << "\n" << std::endl;
+
+    std::cout << "\n" << std::endl;
+
+    for (auto it = database_object.begin(); it != database_object.end(); ++it)
+    {
+        std::cout << *it << std::endl;
+    }
+
+    std::cout << "\n" << std::endl;
+
+    for (auto& el : database_object["Inhalt"].items())
+    {
+        std::cout << ", value:" << el.value() << '\n';
+    }
+
+
+    
+json patch = R"(
+        [
+          { "op": "add", "path": "/hello", "value": ["world"] },
+          { "op": "remove", "path": "/Inhalt", "value":["Fernseher"]}
+        ]
+    )"_json;
+
+std::cout << database_object << std::endl;
 
     return 0;
 }
