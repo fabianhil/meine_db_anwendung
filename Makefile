@@ -1,4 +1,4 @@
 run: lagersystem_run
 
 lagersystem_run:
-	./build/lagerhalterungsystem -r src/lagerhalterung.json
+	./build/lagerhaltungssystem -r src/Lagerhaltung_DB.json

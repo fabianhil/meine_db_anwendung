@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Add Project Attributes
-project(  lagerhalterungsystem
+project(  lagerhaltungssystem
           LANGUAGES CXX
-          DESCRIPTION "Shows the integration of CLI11"
+          DESCRIPTION "Shows an example for a simple database manipulation state machine"
           HOMEPAGE_URL "http://vorlesung.nabla-b.engineering"
 )
 
@@ -31,6 +31,6 @@ if(NOT nlohmann_json_FOUND)
     FetchContent_MakeAvailable(nlohmann_json)
 endif()
 
-add_executable( ${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/lagerhalterungsystem.cc" )
+add_executable( ${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/src/lagerhaltungssystem.cc" )
 
 target_link_libraries( ${PROJECT_NAME} CLI11::CLI11 nlohmann_json::nlohmann_json)
