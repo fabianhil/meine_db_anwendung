@@ -5,34 +5,31 @@
 #include <string>
 
 using json = nlohmann::json;
-//nlohmann::json database_object;
-//                                          zum starten       ./build/lagerhalterungsystem.cc -r src/lagerhalterung.json      ausgeben lassen! 
+//zum starten       ./build/lagerhaltungssystem -r src/Lagerhaltung_DB.json
 struct statemachine {
-    //statemachine(json& database_object);
-    //    : mein_json{database_object};
+
     json& mein_json;
 
     statemachine(json& database_object)
-        :mein_json{database_object} {
-        //std::cout << "Konstruktor called with Initilizerlist!\n";
+        :mein_json{database_object}{
     }
 
     void aendern() {
 
         ausgeben();
 
-            int regalnummer; //Integer für die Options
+            int regalnummer;
 
             std::string neuerinhalt,alterinhalt,wahl;
 
-            std::cout << "In welchem Regal möchetn Sie etwas ändern?" << "\n";
+            std::cout << "In welchem Regal möchten Sie etwas ändern?" << "\n";
 
             std::cin>> regalnummer;
 
             for (auto& change : mein_json["Regale"])
             {
                 if(change ["Regal"] == regalnummer)
-                {          
+                {
                     std::cout << change["Inhalt"] << "\n"; 
 
                     std::cout << "Welcher Inhalt soll geändert werden?" << "\n"; 
@@ -52,7 +49,7 @@ struct statemachine {
                             aktuellinhalt =neuerinhalt;
 
                             return;
-                        }                                                                                      
+                        }
                     }
 
                     std::cout <<"Leider wurde der Inhalt " << alterinhalt <<" nicht gefunden!!! Soll er hinzugefügt werden?? [J/N]" << "\n";
@@ -67,7 +64,7 @@ struct statemachine {
                     
                     else
                     {
-                        std::cout << "Dann eben nicht!" << "\n";
+                        std::cout << "Es wurden keine Änderungen vorgenommen!" << "\n";
                         break;
                     }                          
                 }
@@ -103,12 +100,12 @@ struct statemachine {
 
         std::cin >> speicherpfad;
 
-        std::cout << "\nSpeicherpfad: /CLI11/" << speicherpfad << std::endl;    //Optional. Gibt nur im Terminal den Speicherpfad aus, damit es "schön" aussieht!
-        //Dieser muss je nach dem geändert werden, sollte euer Ordner "wo anders liegen"
-        std::ofstream save_as{speicherpfad};                                    //bzw. sollte die Datei "anders heißen"
-        //Beispiel: "\nSpeicherpfad: Server/maxmustermann/Projekte/Lagersysteme/" usw.
+        std::cout << "\n Speicherpfad: " << speicherpfad << std::endl;
+        
+        std::ofstream save_as{speicherpfad};
+
         save_as << mein_json.dump(4);
-        //Warum auch immer wird die Reihenfolge bei neuem Speichern nicht eingehalten --Gerne Lösungen dazu Teilen!
+        
         save_as.close();
     }
 
@@ -121,17 +118,17 @@ int main(int argc, char** argv) {
 
     nlohmann::json database_object;
 
-    std::cout << "Moin! Hier ist ein Lagerhalterungssystem" << "\n" << std::endl;
+    std::cout << "Wilkommen im Lagerhaltungssystem" << "\n" << std::endl;
 
     CLI::App app{"Schreibe: -r src/lagerhalterung.json \n"};
 
-    std::string filepath; //Strings für die Options
+    std::string filepath; //String für den Dateipfad
 
-    app.add_option("-r,--read", filepath, "Path to config file")
+    app.add_option("-r,--read", filepath, "Path to config file")    //option für die übergabe einer Datenbank im Json Format
     ->required()
     ->check(CLI::ExistingFile);
 
-    //try & catch Funktion, sollte ein Parse Error auftreten, so wird die "app" geschlossen
+    //try & catch Funktion, die übergebenen Argumente werden an CLI übergeben und geparst, sollte ein Parse Error auftreten, so wird das Programm geschlossen
     try
     {
         app.parse(argc, argv);
@@ -141,15 +138,15 @@ int main(int argc, char** argv) {
         return app.exit(e);
     }
 
-    std::ifstream file{filepath};
+    std::ifstream file{filepath};   //öffnen der Datei
 
-    if(!file.is_open())
+    if(!file.is_open())     //falls die Datei nicht geöffnet werden konnte, wird eine Fehlermeldung ausgegeben und das Programm beendet
     {
         std::cout << "Error opening file!\n" << std::endl;
         exit(0);
     }
 
-    //try & catch Funktion, sollte die file nicht dem "database_object" übergeben werden, so schreibe den Fehler und exit mit Fehler
+    //try & catch Funktion, sollte die Datei nicht dem "database_object" übergeben werden können, wird das Programm mit einer Fehlermeldung beendet.
     try
     {
         database_object = nlohmann::json::parse(file);
@@ -162,17 +159,16 @@ int main(int argc, char** argv) {
     }
 
     //statemachine lagerhaltung_statemachine();
-    statemachine lagerhaltung_statemachine{database_object};
+    statemachine lagerhaltung_statemachine{database_object};        //neues objekt vom typ "statemachine" wird erstellt und die von nlohmann::json geparsten 
+                                                                    //und in database_object übergebenen Informationen werden an die Struktur übergeben
 
-    std::cout << "Hallo und Willkommen in unserem Lagersytem!" << std::endl;
+    std::cout << "Hallo und Willkommen in unserem Lagerhaltungssystem!" << std::endl;
 
-    while(true)
+    while(true)     //beginn der eigentlichen statemachine
     {
-        //std::cout << "Hallo und Willkommen in unserem Lagersytem!" << std::endl;
-
         int aktueller_state = 0;
 
-        while((aktueller_state < 1) || (aktueller_state > 4 ))
+        while((aktueller_state < 1) || (aktueller_state > 4 ))          //auswahl des gewünschten option (state)
         {
             std::cout <<    "Du kannst wählen zwischen: \n"
                       <<    "(1) für Inhalt Ändern \n"
@@ -182,7 +178,7 @@ int main(int argc, char** argv) {
 
             std::cin >> aktueller_state;
 
-            if((aktueller_state < 1) || (aktueller_state > 4 ))
+            if((aktueller_state < 1) || (aktueller_state > 4 ))         //überprüfen ob eine gültige eingabe getätigt wurde
             {
                 std::cout << "Keine gültige Auswahl!" << std::endl;
             }
